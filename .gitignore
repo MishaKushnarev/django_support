@@ -1,0 +1,8 @@
+# Editors
+.vscode/
+
+# Python stuff 
+__pycache__
+
+# SQL
+*sqlite3
