@@ -3,7 +3,9 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 
 import requests
+from pathlib import Path
 from django.http import JsonResponse
+import json
 
 # import json
 # from django.http import HttpResponse
@@ -15,6 +17,12 @@ from django.http import JsonResponse
 #     message = json.dumps(data)
 #     return HttpResponse(message, headers=headers, status=HTTPStatus.OK)
 
+dir_path = Path.cwd()
+PATH_TO_JSON_FILE = Path(dir_path, './config/history.json')
+
+def write_history(PATH_TO_JSON_FILE, data: dict) -> None:
+    with open(PATH_TO_JSON_FILE, 'w') as json_file:
+        json.dump(data, json_file, indent=4)
 
 def home(request):
     data = {"message": "hello from json response", "num": 12.2}
@@ -52,6 +60,7 @@ class ExchangeRatesHistory:
 
         if not cls._history:
             cls._history.append(instance)
+            write_history(cls._history)
         elif cls._history[-1] != instance:
             cls._history.append(instance)
 
