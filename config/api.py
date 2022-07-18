@@ -1,11 +1,11 @@
 from __future__ import annotations
 
+import json
 from dataclasses import asdict, dataclass
+from pathlib import Path
 
 import requests
-from pathlib import Path
 from django.http import JsonResponse
-import json
 
 # import json
 # from django.http import HttpResponse
@@ -18,7 +18,7 @@ import json
 #     return HttpResponse(message, headers=headers, status=HTTPStatus.OK)
 
 dir_path = Path.cwd()
-PATH_TO_JSON_FILE = Path(dir_path, './config/history.json')
+PATH_TO_JSON_FILE = Path(dir_path, "./config/history.json")
 
 
 def home(request):
@@ -47,8 +47,9 @@ class ExchangeRate:
 
 ExchangeRates = list[ExchangeRate]
 
+
 def write_history(PATH_TO_JSON_FILE, data) -> None:
-    with open(PATH_TO_JSON_FILE, 'w') as json_file:
+    with open(PATH_TO_JSON_FILE, "w") as json_file:
         json.dump(data, json_file, indent=4)
 
 
@@ -60,7 +61,7 @@ class ExchangeRatesHistory:
         """We woud like to add ExchangeRates instances if it is not last duplicated"""
 
         if not cls._history:
-            cls._history.append(instance)           
+            cls._history.append(instance)
         elif cls._history[-1] != instance:
             cls._history.append(instance)
 
@@ -70,7 +71,6 @@ class ExchangeRatesHistory:
         data = {"results": [asdict(er) for er in cls._history]}
         write_history(PATH_TO_JSON_FILE, data)
         return {"results": [asdict(er) for er in cls._history]}
-    
 
 
 def btc_usd(request):
