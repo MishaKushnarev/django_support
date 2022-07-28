@@ -7,16 +7,6 @@ from pathlib import Path
 import requests
 from django.http import JsonResponse
 
-# import json
-# from django.http import HttpResponse
-# from http import HTTPStatus
-# def home(request):
-#     headers = {"Content-Type": "application/json"}
-#     # message = "{'message': 'hello'}"
-#     data = {"message": "hello"}
-#     message = json.dumps(data)
-#     return HttpResponse(message, headers=headers, status=HTTPStatus.OK)
-
 dir_path = Path.cwd()
 PATH_TO_JSON_FILE = Path(dir_path, "./config/history.json")
 
