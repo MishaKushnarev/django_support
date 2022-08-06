@@ -1,3 +1,13 @@
-from django.contrib import admin  # noqa: F401
+from django.contrib import admin
 
-# Register your models here.
+from .models import Comment, Ticket
+
+
+@admin.register(Ticket)
+class TicketAdmin(admin.ModelAdmin):
+    list_display = ["id", "operator", "client", "theme"]
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ["id", "ticket"]

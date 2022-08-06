@@ -27,11 +27,16 @@ typing-extensions = "==4.2.0"
 virtualenv = "==20.14.1"
 requests = "*"
 pathlib = "==1.0.1"
+djangorestframework = "*"
+markdown = "*"
+django-filter = "*"
 
 [dev-packages]
 black = "==22.6.0"
 isort = "==5.10.1"
 flake8 = "==4.0.1"
+django-extensions = "==3.2.0"
+django-debug-toolbar = "*"
 
 [requires]
 python_version = "3.10"

@@ -1,4 +1,4 @@
 [flake8]
-ignore = E501
+ignore = E501, F401
 max-line-lenght = 120
-exclude = .vscode/, .github/, .git/
+exclude = .vscode/, .github/, .git/, .venv, .env, venv, migrations,

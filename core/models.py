@@ -1,67 +1,54 @@
-from typing import Optional
-
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
+from django.conf import settings
 from django.db import models
 
-
-class TimeStampMixin(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
+from shared.django.models import TimeStampMixin
 
 
-class CustomUserManager(UserManager):
-    """Custom user manager."""
+class Ticket(TimeStampMixin):
+    theme = models.CharField(max_length=255)
+    description = models.TextField()
+    resolved = models.BooleanField(default=False)
+    client = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="client_tickets",
+    )
+    operator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="operator_tickets",
+    )
 
-    def create_user(self, email, username=None, password=None, **kwargs):
-        if not email:
-            raise ValueError("Email field is required.")
-        if not password:
-            raise ValueError("Password field is required.")
-
-        email = self.normalize_email(email)
-        user = self.model(email=email, username=username, **kwargs)
-        user.set_password(password)
-        user.save()
-
-        return user
-
-    def create_superuser(
-        self,
-        email: str,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
-        **kwargs
-    ):
-        superuser_payload: dict = {
-            "is_superuser": True,
-            "is_active": True,
-            "is_staff": True,
-        }
-        return self.create_user(email, username, password, **superuser_payload)
+    def __str__(self) -> str:
+        return f"{self.operator} | {self.theme}"
 
 
-class User(AbstractBaseUser, PermissionsMixin, TimeStampMixin):
-    """This is my custom user model."""
+class Comment(TimeStampMixin):
+    text = models.TextField()
 
-    email = models.EmailField(unique=True)
-    username = models.CharField(max_length=100, null=True)
-    first_name = models.CharField(max_length=100, null=True)
-    last_name = models.CharField(max_length=100, null=True)
-    age = models.PositiveSmallIntegerField(null=True)
-    phone = models.CharField(max_length=13, null=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="comments",
+    )
+    ticket = models.ForeignKey(
+        "Ticket",
+        on_delete=models.CASCADE,
+        related_name="comments",
+    )
+    prev_comment = models.OneToOneField(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="next",
+    )
 
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updateed_at = models.DateTimeField(auto_now=True)
-
-    objects = CustomUserManager()
-
-    EMAIL_FIELD = "email"
-    USERNAME_FIELD = EMAIL_FIELD
-    REQUIRED_FIELDS = []
+    def __str__(self) -> str:
+        return str(self.ticket)
