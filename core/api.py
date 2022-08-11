@@ -13,18 +13,18 @@ def user_as_dict(user: User) -> dict:
     return {
         "username": user.username,
         "email": user.email,
-        "first_name": user.first_name,
-        "last_name": user.last_name,
         "phone": user.phone,
-        "age": user.age,
+        "first_name": user.phone,
+        "last_name": user.phone,
+        "age": user.phone,
     }
 
 
 def ticket_as_dict(ticket: Ticket) -> dict:
     return {
-        "id": ticket.id,
-        "discriptions": ticket.discription,
+        "id": ticket.id,  # type: ignore
         "theme": ticket.theme,
+        "description": ticket.description,
         "operator": user_as_dict(ticket.operator),
         "resolved": ticket.resolved,
         "created_at": ticket.created_at,
@@ -35,15 +35,28 @@ def ticket_as_dict(ticket: Ticket) -> dict:
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
-        fields = "__all__"
-
+        exclude = [
+            "created_at",
+            "updated_at",
+        ]
 
 class UserSerializer(serializers.ModelSerializer):
     role = RoleSerializer()
 
     class Meta:
         model = User
-        fields = "__all__"
+        exclude = [
+            "password",
+            "last_login",
+            "updated_at",
+            "is_active",
+            "is_staff",
+            "is_superuser",
+            "created_at",
+            "updateed_at",
+            "groups",
+            "user_permissions",
+        ]
 
 
 class TicketSerializer(serializers.ModelSerializer):
@@ -55,8 +68,21 @@ class TicketSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class TicketLightSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = ["id", "theme", "resolved", "operator", "client"]
+
+
 @api_view(["GET"])
 def get_all_tickets(request):
     tickets = Ticket.objects.all()
     data = TicketSerializer(tickets, many=True).data
+    return Response(data=data)
+
+
+@api_view(["GET"])
+def get_ticket(request, id_: int):
+    tickets = Ticket.objects.get(id=id_)
+    data = TicketSerializer(tickets).data
     return Response(data=data)
