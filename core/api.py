@@ -40,6 +40,7 @@ class RoleSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
 
+
 class UserSerializer(serializers.ModelSerializer):
     role = RoleSerializer()
 
