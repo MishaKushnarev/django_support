@@ -30,9 +30,6 @@ pathlib = "==1.0.1"
 djangorestframework = "*"
 markdown = "*"
 django-filter = "*"
-black = "*"
-isort = "*"
-flake8 = "*"
 
 [dev-packages]
 black = "==22.6.0"
