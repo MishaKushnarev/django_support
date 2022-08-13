@@ -15,23 +15,13 @@ jobs:
         uses: VaultVulp/action-pipenv@v2.0.1
         with:
           command: install -d
-          
-      - name: Install black
+      - name: Run black
         uses: VaultVulp/action-pipenv@v2.0.1
         with:
-          command: install black 
-          
-      - name: Install isort
+          command: run black --check ./
+      - name: Run isort
         uses: VaultVulp/action-pipenv@v2.0.1
         with:
-          command: install isort
-          
-      - name: Install flake8
-        uses: VaultVulp/action-pipenv@v2.0.1
-        with:
-          command: install flake8     
-          
-      - name: Run formatter
-        run: black --check ./ && isort --check-only ./
+          command: run isort --check-only ./
       - name: Run linter
         run: flake8 ./
