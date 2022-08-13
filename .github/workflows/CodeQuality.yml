@@ -24,4 +24,6 @@ jobs:
         with:
           command: run isort --check-only ./
       - name: Run linter
-        run: flake8 ./
+        uses: VaultVulp/action-pipenv@v2.0.1
+        with:
+          command: run flake8 ./
