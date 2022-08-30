@@ -5,10 +5,7 @@ from django.db import models
 
 from shared.django import TimeStampMixin
 
-DEFAULT_ROLES = {
-    "admin": 1,
-    "user": 2,
-}
+DEFAULT_ROLES = {"admin": 1, "user": 2}
 
 
 class CustomUserManager(UserManager):
