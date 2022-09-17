@@ -8,6 +8,7 @@ django = "==3.2"
 requests = "==2.28.1"
 djangorestframework = "==3.12.1"
 djoser = "==2.1.0"
+pre-commit = "==2.19.0"
 
 [dev-packages]
 flake8 = "==4.0.1"
