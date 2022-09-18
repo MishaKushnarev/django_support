@@ -1,6 +1,7 @@
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import (
     CreateAPIView,
     ListAPIView,
@@ -29,11 +30,26 @@ class TicketsCreateListAPI(ListAPIView, CreateAPIView):
     permission = ClientOnly
 
     def get_queryset(self):
+        link_parameter = self.request.query_params["empty"]
         user = self.request.user
+
         if user.role.id == DEFAULT_ROLES["admin"]:
-            return Ticket.objects.filter(Q(operator=None) | Q(operator=user))
-        elif user.role.id == DEFAULT_ROLES["user"]:
-            return Ticket.objects.filter(client=user)
+
+            if link_parameter == "true":
+                return Ticket.objects.filter(operator=None)
+            elif link_parameter == "false":
+                return Ticket.objects.filter(Q(operator=None) | Q(operator=user))
+            raise ValidationError
+
+        if user.role.id != DEFAULT_ROLES["admin"]:
+            raise ValueError("Permission denied")
+
+        elif link_parameter == "true":
+            pass
+        elif link_parameter == "false":
+            pass
+        else:
+            raise ValueError("Bad format empty")
 
     def post(self, request):
         if self.permission.has_permission(self, request=request):
