@@ -1,4 +1,5 @@
-# from django.db.models import Q
+from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.generics import (
     CreateAPIView,
@@ -6,33 +7,17 @@ from rest_framework.generics import (
     RetrieveAPIView,
     UpdateAPIView,
 )
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from authentication.models import DEFAULT_ROLES
 from core.models import Ticket
-from core.permissons import OperatorOnly
+from core.permissons import ClientOnly, OperatorOnly
 from core.serializers import (
     TicketAssignSerializer,
     TicketLightSerializer,
     TicketSerializer,
 )
-
-# class TicketsCreateAPI(CreateAPIView):
-#     serializer_class = TicketSerializer
-#     queryset = Ticket.objects.all()
-
-
-# class TicketsListAPI(ListAPIView):
-#     serializer_class = TicketLightSerializer
-
-#     def get_queryset(self):
-#         user = self.request.user
-
-#         if user.role.id == DEFAULT_ROLES["admin"]:
-#             return Ticket.objects.filter(client=user)
-
-#         return Ticket.objects.filter(Q(operator=None) | Q(operator=user))
 
 
 class TicketsCreateListAPI(ListAPIView, CreateAPIView):
@@ -41,17 +26,27 @@ class TicketsCreateListAPI(ListAPIView, CreateAPIView):
 
     permission_classes = [IsAuthenticated]
     serializer_class = TicketLightSerializer
+    permission = ClientOnly
 
     def get_queryset(self):
-        return Ticket.objects.all()
+        user = self.request.user
+        if user.role.id == DEFAULT_ROLES["admin"]:
+            return Ticket.objects.filter(Q(operator=None) | Q(operator=user))
+        elif user.role.id == DEFAULT_ROLES["user"]:
+            return Ticket.objects.filter(client=user)
 
     def post(self, request):
-        serializer = TicketSerializer(data=request.data)
-        if serializer.is_valid():
+        if self.permission.has_permission(self, request=request):
+            serializer = TicketSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        raise PermissionDenied
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = TicketLightSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class TicketRetrieveAPI(RetrieveAPIView):
