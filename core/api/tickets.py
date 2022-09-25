@@ -19,6 +19,7 @@ from core.serializers import (
     TicketLightSerializer,
     TicketSerializer,
 )
+from core.servicies import TicketsCRUD
 
 
 class TicketsCreateListAPI(ListAPIView, CreateAPIView):
@@ -90,6 +91,27 @@ class TicketAssignAPI(UpdateAPIView):
 
     def get_queryset(self):
         return Ticket.objects.filter(operator=None)
+
+
+class TicketResolveAPI(UpdateAPIView):
+    """Assign ticket with operator"""
+
+    http_method_names = ["patch"]
+    serializer_class = TicketLightSerializer
+    lookup_field = "id"
+    lookup_url_kwarg = "id"
+    permission_classes = [OperatorOnly]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Ticket.objects.filter(operator=user)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance = TicketsCRUD.change_resolved_status(instance)
+        serializer = self.serializer_class(instance)
+        
+        return Response(serializer.data)
 
 
 # @permission_classes([IsAuthenticatedOrReadOnly])
