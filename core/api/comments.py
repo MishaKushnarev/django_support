@@ -6,13 +6,14 @@ from core.serializers import CommentSerializer
 
 class CommentsListAPI(ListAPIView):
     """Get all comments"""
+
     http_method_names = ["get"]
     serializer_class = CommentSerializer
     lookup_field = "ticket_id"
     lookup_url_kwarg = "ticket_id"
 
     def get_queryset(self):
-        ticket_id: int | None = self.kwargs[self.lookup_field] 
+        ticket_id: int | None = self.kwargs[self.lookup_field]
 
         # NOTE: Walrus operator usage
         # ticket_id: int | None = self.kwargs.get(self.lookup_field, default=None)
@@ -25,6 +26,7 @@ class CommentsListAPI(ListAPIView):
 
 class CommentsCreateAPI(CreateAPIView):
     """Create comment"""
+
     http_method_names = ["post"]
     serializer_class = CommentSerializer
     lookup_field = "ticket_id"
