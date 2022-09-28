@@ -70,18 +70,20 @@ class TicketSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def validate(self, attrs: dict) -> dict:
+
         theme = attrs.get("theme")
 
         if not theme:
             return attrs
 
-        data = Ticket.objects.values("theme")
+        data = Ticket.objects.values_list("theme")
 
         for element in chain.from_iterable(data):
             if element == theme:
-                raise ValidationError("This ticket is already in the database")
+                raise ValidationError("This ticket is already in database")
 
         attrs["client"] = self.context["request"].user
+
         return attrs
 
 
