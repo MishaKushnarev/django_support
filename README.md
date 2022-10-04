@@ -3,7 +3,7 @@
 ___
 ## Run application with Docker
 ```
-sudo docker build -t support_django .
+sudo docker build -t django_support .
 sudo docker run -p 8000:80 -v $PWD:/app/ --rm -it django_support
 ```
 ## Run application with Docker-compose
