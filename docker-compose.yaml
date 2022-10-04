@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres:13.3
+    container_name: support_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=support
+      - POSTGRES_PASSWORD=support
+      - POSTGRES_DB=support
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  django:
+    build: .
+    image: django_support
+    container_name: django_support
+    depends_on:
+      - postgres
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/app/
+
+volumes:
+    pg_data: {}

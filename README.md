@@ -1,6 +1,16 @@
 # **DJANGO SUPPORT**
 ## Program for administration supports requests
 ___
+## Run application with Docker
+```
+sudo docker build -t support_django .
+sudo docker run -p 8000:80 -v $PWD:/app/ --rm -it django_support
+```
+## Run application with Docker-compose
+```
+docker-compose build
+docker-compose up -d
+```
 ## Setup the environment
 ```
 pipenv install
