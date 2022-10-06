@@ -24,7 +24,6 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    "django_extensions",
     "rest_framework",
     "rest_framework.authtoken",
     "djoser",
@@ -37,6 +36,10 @@ LOCAL_APPS = [
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+
+if DEBUG:
+    DEV_APPS = ["django_extensions"]
+    INSTALLED_APPS += DEV_APPS
 
 SITE_ID = 1
 

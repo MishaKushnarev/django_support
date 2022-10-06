@@ -14,5 +14,5 @@ RUN pip install pipenv \
     && pipenv install --system --deploy --ignore-pipfile $PIPENV_EXTRA_ARGS
 
 CMD sleep 5 \
-    && python manage.py migrate \
-    && python manage.py runserver 0.0.0.0:80
+    && python src/manage.py migrate \
+    && python src/manage.py runserver 0.0.0.0:80
