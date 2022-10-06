@@ -6,21 +6,22 @@ services:
     container_name: support_postgres
     ports:
       - "5432:5432"
-    environment:
-      - POSTGRES_USER=support
-      - POSTGRES_PASSWORD=support
-      - POSTGRES_DB=support
+    env_file: ".env"
     volumes:
       - pg_data:/var/lib/postgresql/data
 
   django:
-    build: .
+    build:
+      context: .
+      args:
+        - PIPENV_EXTRA_ARGS=$PIPENV_EXTRA_ARGS
     image: django_support
     container_name: django_support
     depends_on:
       - postgres
     ports:
       - "8000:80"
+    env_file: ".env"
     volumes:
       - ./:/app/
 
