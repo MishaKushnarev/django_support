@@ -4,7 +4,7 @@ from django.db import migrations
 
 
 def autopopulate_roles(apps, schema_editor):
-    Role = apps.get_model("apps.authentication", "Role")
+    Role = apps.get_model("authentication", "Role")
     roles = [Role(name="admin"), Role(name="user")]
     for role in roles:
         role.save()
