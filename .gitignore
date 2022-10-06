@@ -6,3 +6,6 @@ __pycache__
 
 # SQL
 *sqlite3
+
+# Environment variables
+.env
